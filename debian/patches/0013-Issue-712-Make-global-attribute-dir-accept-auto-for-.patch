@@ -1,0 +1,37 @@
+From: Doron Behar <doron.behar@gmail.com>
+Date: Wed, 4 Apr 2018 13:29:30 +0300
+Subject: Issue #712 - Make global attribute `dir` accept auto for HTML5
+
+Applied-Upstream: https://github.com/htacg/tidy-html5/commit/8723681275ce1a1ec43f11c21db196698878cca2
+
+---
+ src/attrs.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/src/attrs.c b/src/attrs.c
+index 2aaf638..0fd0241 100644
+--- a/src/attrs.c
++++ b/src/attrs.c
+@@ -144,7 +144,7 @@ static const Attribute attribute_defs [] =
+   { TidyAttr_DATETIME,                "datetime",                CH_DATE      }, /* INS, DEL */
+   { TidyAttr_DECLARE,                 "declare",                 CH_BOOL      }, /* OBJECT */
+   { TidyAttr_DEFER,                   "defer",                   CH_BOOL      }, /* SCRIPT */
+-  { TidyAttr_DIR,                     "dir",                     CH_TEXTDIR   }, /* ltr or rtl */
++  { TidyAttr_DIR,                     "dir",                     CH_TEXTDIR   }, /* ltr, rtl or auto */
+   { TidyAttr_DISABLED,                "disabled",                CH_BOOL      }, /* form fields */
+   { TidyAttr_DOWNLOAD,                "download",                CH_PCDATA    }, /* anchor */
+   { TidyAttr_ENCODING,                "encoding",                CH_PCDATA    }, /* <?xml?> */
+@@ -2015,8 +2015,11 @@ void CheckScroll( TidyDocImpl* doc, Node *node, AttVal *attval)
+ /* checks dir attribute */
+ void CheckTextDir( TidyDocImpl* doc, Node *node, AttVal *attval)
+ {
+-    ctmbstr const values[] = {"rtl", "ltr", NULL};
+-    CheckAttrValidity( doc, node, attval, values );
++    ctmbstr const values4[] = { "rtl", "ltr", NULL };
++    /* PR #712 - add 'auto' for HTML5 - @doronbehar */
++    ctmbstr const values5[] = { "rtl", "ltr", "auto", NULL };
++    CheckAttrValidity(doc, node, attval,
++        (TY_(IsHTML5Mode)(doc) ? values5 : values4));
+ }
+ 
+ /* checks lang and xml:lang attributes */

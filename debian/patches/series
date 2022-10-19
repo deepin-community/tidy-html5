@@ -1,0 +1,13 @@
+0001-CMakeLists-Use-GNUInstallDirs-module.patch
+0002-Separate-source-and-shared-library-version.patch
+0003-Issue-656-protect-against-NULL-node-set-in-loop.patch
+0004-Issue-655-Fix-unsafe-use-of-output-buffer-as-input-p.patch
+0005-Issue-663-Retain-compatibility-with-gcc-2.95.patch
+0006-Issue-684-Update-language_en.h.patch
+0007-Issue-679-Fix-invalid-output-of-export-config.patch
+0008-Issue-686-Add-attr-COLOR-to-W3CAttrsFor_LINK.patch
+0009-Issue-698-Minor-update-to-man-page-documentation.patch
+0010-Issue-700-change-script-parsing-if-in-html5-mode.patch
+0011-Revert-Remove-unnecessary-AdjustConfig-logic.patch
+0012-Issue-697-Add-NOWRAP-to-print-of-pre-tag.patch
+0013-Issue-712-Make-global-attribute-dir-accept-auto-for-.patch

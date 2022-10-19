@@ -1,0 +1,51 @@
+#! /usr/bin/make -f
+# -*- makefile -*-
+# Uncomment this to turn on verbose mode.
+# export DH_VERBOSE=1
+
+# see FEATURE AREAS in dpkg-buildflags(1)
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
+
+include /usr/share/dpkg/architecture.mk
+
+# We use workaround to deal with cross compilation for man pages.
+# This will build tidy-html5 twice.
+#
+# See https://bugs.debian.org/875429
+
+NATIVE=eval $$(dpkg-architecture -f -a$(DEB_BUILD_ARCH) -s);
+
+CONFIGURE_FLAGS = \
+        -DTIDY_CONSOLE_SHARED:BOOL=YES \
+        -DTIDY_COMPAT_HEADERS:BOOL=YES \
+        -DTIDY_CONFIG_FILE:STRING=/etc/tidy.conf \
+        -DTIDY_USER_CONFIG_FILE:STRING=~/.tidyrc
+
+
+%:
+	dh $@
+
+
+override_dh_auto_configure:
+ifneq ($(DEB_BUILD_ARCH),$(DEB_HOST_ARCH))
+	$(NATIVE) dh_auto_configure --builddirectory=build-native -- $(CONFIGURE_FLAGS)
+	dh_auto_configure -- $(CONFIGURE_FLAGS) -DXSLTPROC_FOUND:BOOL=Off
+else
+	dh_auto_configure -- $(CONFIGURE_FLAGS)
+endif
+
+ifneq ($(DEB_BUILD_ARCH),$(DEB_HOST_ARCH))
+override_dh_auto_build:
+	$(NATIVE) dh_auto_build --builddirectory=build-native
+	dh_auto_build
+endif
+
+ifneq ($(DEB_BUILD_ARCH),$(DEB_HOST_ARCH))
+override_dh_auto_install:
+	install -D -m644 build-native/tidy.1 debian/tmp/usr/share/man/man1/tidy.1
+	dh_auto_install
+endif
+
+override_dh_missing:
+	dh_missing --fail-missing

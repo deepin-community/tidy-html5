@@ -1,0 +1,24 @@
+From: Geoff McLane <ubuntu@geoffair.info>
+Date: Tue, 20 Mar 2018 19:52:35 +0100
+Subject: Issue #697 - Add NOWRAP to print of pre tag
+
+Applied-Upstream: https://github.com/htacg/tidy-html5/commit/202ab98e10d1c9f0f9f0abc697f7f016c3420f77
+
+---
+ src/pprint.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/pprint.c b/src/pprint.c
+index 57cd7b1..321045e 100644
+--- a/src/pprint.c
++++ b/src/pprint.c
+@@ -2143,7 +2143,8 @@ void TY_(PPrintTree)( TidyDocImpl* doc, uint mode, uint indent, Node *node )
+                 TY_(PFlushLineSmart)( doc, indent );
+             }
+ 
+-            PPrintTag( doc, mode, indent, node );   /* add <pre> or <textarea> tag */
++            /* Issue #697 - Add NOWRAP to the mode */
++            PPrintTag( doc, (mode | NOWRAP), indent, node );   /* add <pre> or <textarea> tag */
+ 
+             indent = 0;
+             /* @camoy Fix #158 - remove inserted newlines in pre - TY_(PFlushLineSmart)( doc, indent ); */

@@ -1,0 +1,215 @@
+From: Geoff McLane <ubuntu@geoffair.info>
+Date: Sat, 23 Dec 2017 17:36:05 +0100
+Subject: Issue #663 - Retain compatibility with gcc 2.95
+
+Applied-Upstream: https://github.com/htacg/tidy-html5/commit/1f22358a577b8dffc933afc76dde71a271044c03
+---
+ include/tidyplatform.h | 19 +++++++++++++++++--
+ src/language.c         |  3 ++-
+ src/language_en_gb.h   |  3 ++-
+ src/language_es.h      |  3 ++-
+ src/language_es_mx.h   |  3 ++-
+ src/language_fr.h      |  3 ++-
+ src/language_pt_br.h   |  3 ++-
+ src/language_zh_cn.h   |  3 ++-
+ src/tidylib.c          | 18 ++++++++++--------
+ 9 files changed, 41 insertions(+), 17 deletions(-)
+
+diff --git a/include/tidyplatform.h b/include/tidyplatform.h
+index 28de468..ca169dc 100644
+--- a/include/tidyplatform.h
++++ b/include/tidyplatform.h
+@@ -315,6 +315,15 @@ extern "C" {
+ #  endif
+ #endif
+ 
++/* === Convenience defines for Haiku platforms === */
++
++#if defined(__HAIKU__)
++#  define HAIKU
++#  ifndef PLATFORM_NAME
++#    define PLATFORM_NAME "Haiku"
++#  endif
++#endif
++
+ /* === Convenience defines for Cygwin platforms === */
+ 
+ #if defined(__CYGWIN__)
+@@ -428,7 +437,7 @@ extern "C" {
+ #if PRESERVE_FILE_TIMES
+ 
+ #  ifndef HAS_FUTIME
+-#    if defined(CYGWIN_OS) || defined(BE_OS) || defined(OS2_OS) || defined(HPUX_OS) || defined(SOLARIS_OS) || defined(LINUX_OS) || defined(BSD_BASED_OS) || defined(MAC_OS) || defined(__MSL__) || defined(IRIX_OS) || defined(AIX_OS) || defined(__BORLANDC__) || defined(__GLIBC__)
++#    if defined(CYGWIN_OS) || defined(BE_OS) || defined(OS2_OS) || defined(HPUX_OS) || defined(SOLARIS_OS) || defined(LINUX_OS) || defined(BSD_BASED_OS) || defined(MAC_OS) || defined(__MSL__) || defined(IRIX_OS) || defined(AIX_OS) || defined(__BORLANDC__) || defined(__GLIBC__) || defined(__HAIKU__)
+ #      define HAS_FUTIME 0
+ #    else
+ #      define HAS_FUTIME 1
+@@ -456,6 +465,12 @@ extern "C" {
+ #    include <utime.h>
+ #  endif
+ 
++#if defined(__HAIKU__)
++#ifndef va_copy
++#define va_copy(dest, src) (dest = src)
++#endif
++#endif
++
+ /* MS Windows needs _ prefix for Unix file functions.
+    Not required by Metrowerks Standard Library (MSL).
+   
+@@ -549,7 +564,7 @@ extern "C" {
+ #  include <sys/types.h>
+ #endif
+ 
+-#if !defined(HPUX_OS) && !defined(CYGWIN_OS) && !defined(MAC_OS_X) && !defined(BE_OS) && !defined(SOLARIS_OS) && !defined(BSD_BASED_OS) && !defined(OSF_OS) && !defined(IRIX_OS) && !defined(AIX_OS) && !defined(LINUX_OS)
++#if !defined(HPUX_OS) && !defined(CYGWIN_OS) && !defined(MAC_OS_X) && !defined(BE_OS) && !defined(SOLARIS_OS) && !defined(BSD_BASED_OS) && !defined(OSF_OS) && !defined(IRIX_OS) && !defined(AIX_OS) && !defined(LINUX_OS) && !defined(__HAIKU__)
+ #  undef uint
+    typedef unsigned int uint;
+ #endif
+diff --git a/src/language.c b/src/language.c
+index d55938c..fd89730 100644
+--- a/src/language.c
++++ b/src/language.c
+@@ -22,12 +22,13 @@
+ 
+ /**
+  *  This structure type provides universal access to all of Tidy's strings.
++ *  Note limit of 8, to be changed as more added...
+  */
+ typedef struct {
+     Bool manually_set;
+     languageDefinition *currentLanguage;
+     languageDefinition *fallbackLanguage;
+-    languageDefinition *languages[];
++    languageDefinition *languages[8];
+ } tidyLanguagesType;
+ 
+ 
+diff --git a/src/language_en_gb.h b/src/language_en_gb.h
+index 97cc696..71c37e4 100644
+--- a/src/language_en_gb.h
++++ b/src/language_en_gb.h
+@@ -1,4 +1,4 @@
+-﻿#ifndef language_en_gb_h
++#ifndef language_en_gb_h
+ #define language_en_gb_h
+ /*
+  * language_en_gb.h
+@@ -180,3 +180,4 @@ static languageDefinition language_en_gb = { whichPluralForm_en_gb, {
+ 
+ 
+ #endif /* language_en_gb_h */
++
+diff --git a/src/language_es.h b/src/language_es.h
+index eff66e4..14f51e5 100644
+--- a/src/language_es.h
++++ b/src/language_es.h
+@@ -1,4 +1,4 @@
+-﻿#ifndef language_es_h
++#ifndef language_es_h
+ #define language_es_h
+ /*
+  * language_es.h
+@@ -131,3 +131,4 @@ static languageDefinition language_es = { whichPluralForm_es, {
+ 
+ 
+ #endif /* language_es_h */
++
+diff --git a/src/language_es_mx.h b/src/language_es_mx.h
+index 7f061b6..55b1b3a 100644
+--- a/src/language_es_mx.h
++++ b/src/language_es_mx.h
+@@ -1,4 +1,4 @@
+-﻿#ifndef language_es_mx_h
++#ifndef language_es_mx_h
+ #define language_es_mx_h
+ /*
+  * language_es_mx.h
+@@ -76,3 +76,4 @@ static languageDefinition language_es_mx = { whichPluralForm_es_mx, {
+ 
+ 
+ #endif /* language_es_mx_h */
++
+diff --git a/src/language_fr.h b/src/language_fr.h
+index c6140e9..aeaaa6f 100644
+--- a/src/language_fr.h
++++ b/src/language_fr.h
+@@ -1,4 +1,4 @@
+-﻿#ifndef language_fr_h
++#ifndef language_fr_h
+ #define language_fr_h
+ /*
+  * language_fr.h
+@@ -1172,3 +1172,4 @@ static languageDefinition language_fr = { whichPluralForm_fr, {
+ 
+ 
+ #endif /* language_fr_h */
++
+diff --git a/src/language_pt_br.h b/src/language_pt_br.h
+index 2b65d88..f64fd32 100644
+--- a/src/language_pt_br.h
++++ b/src/language_pt_br.h
+@@ -1,4 +1,4 @@
+-﻿#ifndef language_pt_br_h
++#ifndef language_pt_br_h
+ #define language_pt_br_h
+ /*
+  * language_pt_br.h
+@@ -1294,3 +1294,4 @@ static languageDefinition language_pt_br = { whichPluralForm_pt_br, {
+ 
+ 
+ #endif /* language_pt_br_h */
++
+diff --git a/src/language_zh_cn.h b/src/language_zh_cn.h
+index 2321974..1919fa5 100644
+--- a/src/language_zh_cn.h
++++ b/src/language_zh_cn.h
+@@ -1,4 +1,4 @@
+-﻿#ifndef language_zh_cn_h
++#ifndef language_zh_cn_h
+ #define language_zh_cn_h
+ /*
+  * language_zh_cn.h
+@@ -78,3 +78,4 @@ static languageDefinition language_zh_cn = { whichPluralForm_zh_cn, {
+ 
+ 
+ #endif /* language_zh_cn_h */
++
+diff --git a/src/tidylib.c b/src/tidylib.c
+index 85d59e2..67d7a37 100644
+--- a/src/tidylib.c
++++ b/src/tidylib.c
+@@ -1135,14 +1135,16 @@ int   tidyDocParseFile( TidyDocImpl* doc, ctmbstr filnam )
+     fin = fopen( filnam, "rb" );
+ 
+ #if PRESERVE_FILE_TIMES
+-    struct stat sbuf = {0};
+-    /* get last modified time */
+-    TidyClearMemory( &doc->filetimes, sizeof(doc->filetimes) );
+-    if ( fin && cfgBool(doc,TidyKeepFileTimes) &&
+-         fstat(fileno(fin), &sbuf) != -1 )
+     {
+-          doc->filetimes.actime  = sbuf.st_atime;
+-          doc->filetimes.modtime = sbuf.st_mtime;
++        struct stat sbuf = { 0 };
++        /* get last modified time */
++        TidyClearMemory(&doc->filetimes, sizeof(doc->filetimes));
++        if (fin && cfgBool(doc, TidyKeepFileTimes) &&
++            fstat(fileno(fin), &sbuf) != -1)
++        {
++            doc->filetimes.actime = sbuf.st_atime;
++            doc->filetimes.modtime = sbuf.st_mtime;
++        }
+     }
+ #endif
+ 
+@@ -1436,8 +1438,8 @@ int         TY_(DocParseStream)( TidyDocImpl* doc, StreamIn* in )
+     Bool xmlIn = cfgBool( doc, TidyXmlTags );
+     TidyConfigChangeCallback callback = doc->pConfigChangeCallback;
+     
+-    doc->pConfigChangeCallback = NULL;
+     int bomEnc;
++    doc->pConfigChangeCallback = NULL;
+ 
+     assert( doc != NULL && in != NULL );
+     assert( doc->docIn == NULL );

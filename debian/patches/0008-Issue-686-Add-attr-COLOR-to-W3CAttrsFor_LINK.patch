@@ -1,0 +1,21 @@
+From: Geoff McLane <ubuntu@geoffair.info>
+Date: Thu, 8 Mar 2018 18:10:23 +0100
+Subject: Issue #686 - Add attr COLOR to W3CAttrsFor_LINK
+
+Applied-Upstream: https://github.com/htacg/tidy-html5/commit/0263dfb6b205c0069e8b13857c59f68d3ecbf352
+---
+ src/attrdict.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/attrdict.c b/src/attrdict.c
+index c9ee060..f8d58e7 100644
+--- a/src/attrdict.c
++++ b/src/attrdict.c
+@@ -1955,6 +1955,7 @@ const AttrVersion TY_(W3CAttrsFor_LINK)[] =
+   { TidyAttr_AS,                    xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|HT50|XH50 },
+   { TidyAttr_CHARSET,               xxxx|xxxx|H40T|H41T|X10T|H40F|H41F|X10F|H40S|H41S|X10S|XH11|XB10|xxxx|xxxx },
+   { TidyAttr_CLASS,                 xxxx|xxxx|H40T|H41T|X10T|H40F|H41F|X10F|H40S|H41S|X10S|XH11|XB10|HT50|XH50 }, /* CORE override */
++  { TidyAttr_COLOR,                 xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|HT50|XH50 }, /* Is #686 */
+   { TidyAttr_CROSSORIGIN,           xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|xxxx|HT50|XH50 },
+   { TidyAttr_DIR,                   xxxx|xxxx|H40T|H41T|X10T|H40F|H41F|X10F|H40S|H41S|X10S|XH11|xxxx|HT50|XH50 }, /* CORE override */
+   { TidyAttr_HREF,                  HT20|HT32|H40T|H41T|X10T|H40F|H41F|X10F|H40S|H41S|X10S|XH11|XB10|HT50|XH50 },
